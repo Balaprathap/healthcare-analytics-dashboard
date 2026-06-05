@@ -17,21 +17,17 @@ An end-to-end healthcare analytics solution built using PostgreSQL (Supabase), S
 
 ---
 
-## Architecture
-
-!(Architecture/architecture.png)
-
----
-
 ## Dashboard Preview
 
-!(Screenshots/Dashboard.png)
-
----
+![Dashboard](Dashboard.png)
 
 ## Data Model
 
-!(Screenshots/Data_Model.png)
+![Data Model](Data_Model.png)
+
+## KPI View
+
+![KPI View](KPI_View.png)
 
 ---
 

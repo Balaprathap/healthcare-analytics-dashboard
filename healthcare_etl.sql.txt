@@ -1,0 +1,117 @@
+-- ==========================
+-- LOAD DIM DOCTOR
+-- ==========================
+
+INSERT INTO dim_doctor (doctor_name)
+SELECT DISTINCT TRIM("Doctor")
+FROM stg_healthcare
+WHERE "Doctor" IS NOT NULL
+ON CONFLICT (doctor_name) DO NOTHING;
+
+-- ==========================
+-- LOAD DIM HOSPITAL
+-- ==========================
+
+INSERT INTO dim_hospital (hospital_name)
+SELECT DISTINCT TRIM("Hospital")
+FROM stg_healthcare
+WHERE "Hospital" IS NOT NULL
+ON CONFLICT (hospital_name) DO NOTHING;
+
+-- ==========================
+-- LOAD DIM INSURANCE
+-- ==========================
+
+INSERT INTO dim_insurance (insurance_provider)
+SELECT DISTINCT TRIM("Insurance Provider")
+FROM stg_healthcare
+WHERE "Insurance Provider" IS NOT NULL
+ON CONFLICT (insurance_provider) DO NOTHING;
+
+-- ==========================
+-- LOAD DIM PATIENT
+-- ==========================
+
+INSERT INTO dim_patient (
+    patient_name,
+    age,
+    gender,
+    blood_type,
+    medical_condition
+)
+SELECT DISTINCT
+    TRIM("Name"),
+    "Age",
+    TRIM("Gender"),
+    TRIM("Blood Type"),
+    TRIM("Medical Condition")
+FROM stg_healthcare;
+
+-- ==========================
+-- LOAD DIM DATE
+-- ==========================
+
+INSERT INTO dim_date (
+    full_date,
+    year,
+    quarter,
+    month,
+    month_name
+)
+SELECT DISTINCT
+    dt::date,
+    EXTRACT(YEAR FROM dt)::int,
+    EXTRACT(QUARTER FROM dt)::int,
+    EXTRACT(MONTH FROM dt)::int,
+    TO_CHAR(dt, 'Month')
+FROM (
+    SELECT "Date of Admission" AS dt FROM stg_healthcare
+    UNION
+    SELECT "Discharge Date" AS dt FROM stg_healthcare
+) dates
+ON CONFLICT (full_date) DO NOTHING;
+
+-- ==========================
+-- LOAD FACT ADMISSIONS
+-- ==========================
+
+INSERT INTO fact_admissions (
+    patient_key,
+    doctor_key,
+    hospital_key,
+    insurance_key,
+    admission_date,
+    discharge_date,
+    billing_amount,
+    room_number,
+    admission_type,
+    medication,
+    test_results,
+    length_of_stay
+)
+SELECT
+    p.patient_key,
+    d.doctor_key,
+    h.hospital_key,
+    i.insurance_key,
+    s."Date of Admission",
+    s."Discharge Date",
+    s."Billing Amount",
+    s."Room Number",
+    TRIM(s."Admission Type"),
+    TRIM(s."Medication"),
+    TRIM(s."Test Results"),
+    (s."Discharge Date" - s."Date of Admission")::int AS length_of_stay
+FROM stg_healthcare s
+JOIN dim_patient p
+    ON p.patient_name = TRIM(s."Name")
+   AND p.age = s."Age"
+   AND p.gender = TRIM(s."Gender")
+   AND p.blood_type = TRIM(s."Blood Type")
+   AND p.medical_condition = TRIM(s."Medical Condition")
+JOIN dim_doctor d
+    ON d.doctor_name = TRIM(s."Doctor")
+JOIN dim_hospital h
+    ON h.hospital_name = TRIM(s."Hospital")
+JOIN dim_insurance i
+    ON i.insurance_provider = TRIM(s."Insurance Provider");

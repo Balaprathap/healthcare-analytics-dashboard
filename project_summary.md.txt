@@ -1,0 +1,95 @@
+# Healthcare Analytics & Revenue Intelligence Platform
+
+## Executive Summary
+
+Developed a cloud-based healthcare analytics solution using Supabase PostgreSQL and SQL to transform raw patient admission data into a structured star-schema data warehouse.
+
+The project processes 55,500 healthcare admission records and enables business intelligence reporting across patient demographics, hospital performance, insurance utilization, revenue generation, and operational metrics.
+
+---
+
+## Business Problem
+
+Healthcare organizations generate large amounts of operational and financial data.
+
+Without structured analytics, decision-makers struggle to answer questions such as:
+
+- Which insurance providers contribute the most revenue?
+- Which hospitals generate the highest billing amounts?
+- What are the monthly admission trends?
+- Which age groups require the most healthcare resources?
+- What is the average patient length of stay?
+
+---
+
+## Solution
+
+A cloud-based analytical data warehouse was designed using PostgreSQL on Supabase.
+
+The solution follows a dimensional modeling approach:
+
+### Staging Layer
+- stg_healthcare
+
+### Dimension Tables
+- dim_patient
+- dim_doctor
+- dim_hospital
+- dim_insurance
+- dim_date
+
+### Fact Table
+- fact_admissions
+
+---
+
+## ETL Workflow
+
+1. Load raw healthcare records into staging.
+2. Extract unique business entities into dimension tables.
+3. Create date dimension for time-based analysis.
+4. Populate fact table with foreign-key relationships.
+5. Generate derived metrics such as Length of Stay.
+
+---
+
+## Analytics Performed
+
+- Revenue by Insurance Provider
+- Revenue by Admission Type
+- Monthly Admission Trends
+- Average Length of Stay
+- Top Medical Conditions
+- Revenue by Age Group
+- Top Hospitals by Revenue
+- Top Doctors by Patient Volume
+
+---
+
+## Technical Skills Demonstrated
+
+- SQL
+- PostgreSQL
+- Data Warehousing
+- Star Schema Design
+- ETL Development
+- Data Modeling
+- Business Analytics
+- Cloud Databases (Supabase)
+
+---
+
+## Dataset Statistics
+
+- Records Processed: 55,500
+- Patient Records: 54,966
+- Doctors: 40,341
+- Hospitals: 39,876
+- Insurance Providers: 5
+- Date Dimension Records: 1,857
+
+---
+
+## Next Phase
+
+Connect Power BI Desktop to Supabase PostgreSQL and build interactive executive dashboards for healthcare analytics.
